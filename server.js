@@ -35,7 +35,15 @@ app.post("/tasks",async function(req, res) {
 	res.send(task);
 });
 
-app.patch("/tasks/:id", function(req, res) {
+app.patch("/tasks/:id", async function(req, res) {
+	console.log(...req.body);
+	console.log(req.params);
+	const client = new MongoClient("mongodb://127.0.0.1");
+	await client.connect();
+	const db = client.db("todoapp");
+	const collection = db.collection("tasks");
+	const data = await collection.updateOne({_id: new ObjectId(req.params.id)},{"$set": req.body});
+	res.send(data);
 });
 
 app.delete("/tasks/:id", async function(req, res) {
